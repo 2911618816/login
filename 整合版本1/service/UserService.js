@@ -14,10 +14,10 @@ function UserService(){
 
         // (1)用户工具类
         var tool=require('../Tools/tool');
-        var userMail =tool.crypto(mail);
+
         var userPwd =tool.crypto(password);
 
-        this.selectUserByName(userMail,function(result){
+        this.selectUserByName(mail,function(result){
             var body={
                 state:0,
                 msg:"hello"
@@ -34,15 +34,16 @@ function UserService(){
                 var buffer = result[0].password;
                 //3,判断用户是否合法
                 if(userPwd==buffer){
-                         body.state=2;
-                         body.msg="登录成功！";
-                         body.mail = mail;
-                         body.password = buffer;
+                    body.state=2;
+                    body.msg="登录成功！";
+                    body.mail = mail;
+                    body.password = buffer;
                 }else{
                     body.state='1';
-                        body.msg= "邮箱或密码错误。。。"
+                    body.msg= "邮箱或密码错误。。。"
                 }
             };
+
             call(body);
         });
 
@@ -50,22 +51,21 @@ function UserService(){
 
 
 
-    this.insert = function(email,user,password,ConfirmPassword,call) {
+    this.insert = function(mail,user,password,ConfirmPassword,call) {
         var tool=require('../tools/tool');
 
         var resData = {
             insertId: -1,
             msg: ''
         }
-        var newEmail = tool.crypto(email);
-        var newUser = tool.crypto(user);
+
         var newPassword = tool.crypto(password);
         var ConfirmPassword = tool.crypto(ConfirmPassword);
 
         //1,如何存在就直接返回存在的结果
 
         var that = this;
-        this.checkUser(email,password,function(result) {
+        this.checkUser(mail,password,function(result) {
             console.log('insert result====');
             console.log(result);
             if (result.state==2) {
@@ -76,13 +76,14 @@ function UserService(){
 
                 if(newPassword==ConfirmPassword){
                     let userid;
-                    that.userDao.insertUser(newEmail,newUser,newPassword,function(data){
+                    that.userDao.insertUser(mail,user,newPassword,function(data){
                         userid = data.insertId
                         console.log(data.insertId);
                     });
                     resData.insertId = '2';
                     resData.msg = "注册成功";
-                    resData.userID = userid;
+
+                    call(resData);
 
                 }else{
                     resData.insertId = '1';
@@ -91,9 +92,13 @@ function UserService(){
 
             }
 
-            call(resData);
+
 
         },-1)
+    }
+
+    this.end = function () {
+        this.userDao.end();
     }
 
 

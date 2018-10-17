@@ -1,17 +1,27 @@
+//用flag判断当前是否登录，如果登录值为2，没有值为1
+let flag;
+
+//首页模块 进入首页判断浏览器是否保存cookie
+//判断当前是否是登录状态
+
 exports.index = function(req,res){
 
-
-    console.log('index session.sign====='+req.session.sign)
-
-    if(req.session.sign){
+    if((req.session.sign&&flag==2) || flag==2){
         res.render('index',{state:2});
+        flag = 2;
+        return;
+    }else {
+        res.render('index',{state:-1});
+        flag = 1
         return;
     }
-        res.render('index',{state:-1});
-        return;
 
 }
 
+exports.logOut = function(req,res){
+    res.render('index',{state:-1});
+    flag = 1;
+}
 
 
 exports.cart = function(req,res){
@@ -19,11 +29,13 @@ exports.cart = function(req,res){
 
     console.log('index session.sign====='+req.session.sign)
 
-    if(req.session.sign){
+    if( flag == 2){
         res.render('cart',{state:2});
+        flag = 2;
         return;
     }
     res.render('cart',{state:-1});
+    flag = 1;
     return;
 
 }
@@ -34,11 +46,14 @@ exports.categories = function(req,res){
 
     console.log('index session.sign====='+req.session.sign)
 
-    if(req.session.sign){
+    if(flag == 2){
+        console.log(flag);
         res.render('categories',{state:2});
+        flag = 2;
         return;
     }
     res.render('categories',{state:-1});
+    flag = 1;
     return;
 
 }
@@ -46,12 +61,13 @@ exports.categories = function(req,res){
 exports.checkout = function(req,res){
 
 
-    console.log('index session.sign====='+req.session.sign)
-
-    if(req.session.sign){
+    if(flag == 2){
+        console.log(flag);
+        flag = 2;
         res.render('checkout',{state:2});
         return;
     }
+    flag = 1;
     res.render('checkout',{state:-1});
     return;
 
@@ -60,13 +76,14 @@ exports.checkout = function(req,res){
 exports.contact = function(req,res){
 
 
-    console.log('index session.sign====='+req.session.sign)
-
-    if(req.session.sign){
+    if(flag == 2){
+        console.log(flag);
         res.render('contact',{state:2});
+        flag = 2;
         return;
     }
     res.render('contact',{state:-1});
+    flag = 1;
     return;
 
 }
@@ -74,13 +91,14 @@ exports.contact = function(req,res){
 exports.product = function(req,res){
 
 
-    console.log('index session.sign====='+req.session.sign)
-
-    if(req.session.sign){
+    if(flag == 2){
+        console.log(flag);
         res.render('product',{state:2});
+        flag = 2;
         return;
     }
     res.render('product',{state:-1});
+    flag = 1;
     return;
 
 }
@@ -90,43 +108,7 @@ exports.product = function(req,res){
 //登录判断是否存在cookie
 exports.logAndReg=function(req,res){
 
-    console.log('index session.sign====='+req.session.sign)
-
-    if(req.session.sign){
-        res.render('index',{state:2});
-        return;
-    }
-
-    var email = req.cookies.mail;
-    var password = req.cookies.password;
-
-    console.log('cookie-mail====='+email);
-    console.log('cookie-password====='+password);
-
-    if(email==null||password==null){
-        res.render('logAndReg',{state:-1});
-        console.log('nullll=====-1');
-    }else{
-        //(1)引入userService
-        var UserService = require('../Service/UserService');
-        //(2)创建对象
-        var userService = new UserService();
-        //(3)对象初始化
-        userService.init();
-        //(4)验证用户是否合法
-        userService.checkUser(email,password,function(result){
-
-            if(result.state==2){
-                req.session.sign=true;
-                res.render('index',{state:2});
-            }else{
-                res.render('logAndReg',{state:-1})
-            };
-        },1);
-
-    }
-
-    // res.render('index',{state:-1})
+    res.render('logAndReg',{state:-1})
 
 }
 
@@ -148,16 +130,18 @@ exports.login=function(req,res){
 
         if(result.state==2){
             req.session.sign=true;
+            flag=2;
             res.cookie('mail',result.mail,{maxAge:10*1000});
             res.cookie('password',result.password,{maxAge:10*1000});
-            res.render('index',{state:2})
+            var data = JSON.stringify(result);
+            res.end(data);
         }
-
         console.log('login session.sign====='+req.session.sign)
-
-        res.end(JSON.stringify(result));
+        console.log('login flag====='+flag)
+        userService.end();
 
     },0);
+
 
 }
 
@@ -178,6 +162,7 @@ exports.register = function(req,res) {
     userService.insert(email,user,password,ConfirmPassword,function(result) {
         //3,把数据传给view
         res.end(JSON.stringify(result));
+        userService.end();
     });
 
 }
