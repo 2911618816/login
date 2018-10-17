@@ -1,52 +1,50 @@
+//1,引入express
 var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var session = require('express-session');
 var app = express();
-app.set('view engine','html');
-app.set('views',path.join(__dirname,'views'));
-app.engine('html',require('ejs').__express);
+
+//2,设置模板引擎
+var path = require('path');
+//3,设置视图地址
+app.set('views', path.join(__dirname, '/views'));
+//4,设置ejs引擎
+app.set('view engine', 'html');
+app.engine('html', require('ejs').__express);
+
+//5,静态文件
 app.use(express.static('public'));
-// app.use(cookieParser());
-// app.use(session({
-//     secret: '12345',
-//     name: 'express_cookie',   //这里的name值得是cookie的name，默认cookie的name是：connect.sid
-//     cookie: {maxAge: 80*1000 },     //设置maxAge是80000ms，即80s后session和相应的cookie失效过期
-// }));
 
+//6,引入body-parser模块
 var bodyParser = require('body-parser');
-var urlencodedParser = bodyParser.urlencoded({extended:false});
-var loginController = require('./controller/loginController');
-var registController = require('./controller/registController');
+//7，创建 application/x-www-form-urlencoded 编码解析
+var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
+//引入session模块
+var session = require('express-session');
+app.use(session({
+    secret: '12345',
+    name: 'express_11_cookie',
+    cookie: {maxAge: 80*1000}
+}));
 
-app.get('/logAndReg', loginController.index);
-app.post('/login',urlencodedParser, loginController.login);
-app.post('/regist',urlencodedParser, registController.regist);
+//引入cookie模块
+var cookieParser = require('cookie-parser');
+app.use(cookieParser());
 
-app.get('/cart', function (req, res) {
-    res.render('cart',{});
-});
+//1,首页
+var indexController=require('./Controllers/IndexController');
+app.get('/index',indexController.index);
+app.get('/logAndReg', indexController.logAndReg);
+app.post('/login',urlencodedParser,indexController.login);
+app.post('/register',urlencodedParser,indexController.register);
+app.get('/cart', indexController.cart);
 
-app.get('/categories', function (req, res) {
-    res.render('categories',{});
-});
+app.get('/categories', indexController.categories);
 
-app.get('/checkout', function (req, res) {
-    res.render('checkout',{});
-});
+app.get('/checkout',  indexController.checkout);
 
-app.get('/contact', function (req, res) {
-    res.render('contact',{});
-});
+app.get('/contact',  indexController.contact);
 
-app.get('/index', function (req, res) {
-    res.render('index',{});
-});
-
-app.get('/product', function (req, res) {
-    res.render('product',{});
-});
+app.get('/product', indexController.product);
 
 
 app.listen(8888);
