@@ -46,5 +46,4 @@ app.get('/contact',  indexController.contact);
 
 app.get('/product', indexController.product);
 
-
 app.listen(8888);
