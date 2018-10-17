@@ -97,7 +97,6 @@ function UserService(){
     }
 
 
-
     this.selectUserByName=function(mail,call){
         //(4)查询密码
         this.userDao.selectUserByName(mail,function(result){
