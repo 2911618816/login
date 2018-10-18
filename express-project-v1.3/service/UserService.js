@@ -34,10 +34,10 @@ function UserService(){
                 var buffer = result[0].password;
                 //3,判断用户是否合法
                 if(userPwd==buffer){
-                    body.state=2;
-                    body.msg="登录成功！";
-                    body.mail = mail;
-                    body.password = buffer;
+                         body.state=2;
+                         body.msg="登录成功！";
+                         body.mail = mail;
+                         body.password = buffer;
                 }else{
                     body.state='1';
                     body.msg= "邮箱或密码错误。。。"
@@ -66,28 +66,30 @@ function UserService(){
 
         var that = this;
         this.checkUser(mail,password,function(result) {
-            console.log('insert result====');
-            console.log(result);
+            // console.log('insert result====');
+            // console.log(result);
             if (result.state==2) {
-                console.log(result)
+                // console.log(result)
                 resData.insertId = '0';
-                resData.msg = "用户已经存在！"
+                resData.msg = "该邮箱已注册！"
+                call(resData.msg);
             } else {
 
                 if(newPassword==ConfirmPassword){
-                    let userid;
+                    // let userid;
                     that.userDao.insertUser(mail,user,newPassword,function(data){
-                        userid = data.insertId
-                        console.log(data.insertId);
+                        // userid = data.insertId
+                        // console.log(data.insertId);
                     });
                     resData.insertId = '2';
                     resData.msg = "注册成功";
 
-                    call(resData);
+                    call(resData.msg);
 
                 }else{
                     resData.insertId = '1';
                     resData.msg = "两次输入的密码不一致，请重新输入";
+                    call(resData.msg);
                 }
 
             }

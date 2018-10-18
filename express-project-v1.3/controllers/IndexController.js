@@ -6,7 +6,7 @@ let flag;
 
 exports.index = function(req,res){
 
-    if((req.session.sign&&flag==2) || flag==2){
+    if((req.session.sign&&flag==2)){
         res.render('index',{state:2});
         flag = 2;
         return;
@@ -27,7 +27,7 @@ exports.logOut = function(req,res){
 exports.cart = function(req,res){
 
 
-    console.log('index session.sign====='+req.session.sign)
+    // console.log('index session.sign====='+req.session.sign)
 
     if( flag == 2){
         res.render('cart',{state:2});
@@ -44,10 +44,10 @@ exports.cart = function(req,res){
 exports.categories = function(req,res){
 
 
-    console.log('index session.sign====='+req.session.sign)
+    // console.log('index session.sign====='+req.session.sign)
 
     if(flag == 2){
-        console.log(flag);
+        // console.log(flag);
         res.render('categories',{state:2});
         flag = 2;
         return;
@@ -62,7 +62,7 @@ exports.checkout = function(req,res){
 
 
     if(flag == 2){
-        console.log(flag);
+        // console.log(flag);
         flag = 2;
         res.render('checkout',{state:2});
         return;
@@ -77,7 +77,7 @@ exports.contact = function(req,res){
 
 
     if(flag == 2){
-        console.log(flag);
+        // console.log(flag);
         res.render('contact',{state:2});
         flag = 2;
         return;
@@ -92,7 +92,7 @@ exports.product = function(req,res){
 
 
     if(flag == 2){
-        console.log(flag);
+        // console.log(flag);
         res.render('product',{state:2});
         flag = 2;
         return;
@@ -126,18 +126,19 @@ exports.login=function(req,res){
     //(3)对象初始化
     userService.init();
     //(4)验证用户是否合法
-    userService.checkUser(email,password,function(result){
+       userService.checkUser(email,password,function(result){
 
         if(result.state==2){
             req.session.sign=true;
             flag=2;
-            res.cookie('mail',result.mail,{maxAge:10*1000});
-            res.cookie('password',result.password,{maxAge:10*1000});
-            var data = JSON.stringify(result);
-            res.end(data);
+            res.cookie('mail',result.mail,{maxAge:30*1000});
+            res.cookie('password',result.password,{maxAge:30*1000});
+            // var data = JSON.stringify(result);
+            // res.end(data);
+            res.end(result.msg);
         }
-        console.log('login session.sign====='+req.session.sign)
-        console.log('login flag====='+flag)
+        // console.log('login session.sign====='+req.session.sign)
+        // console.log('login flag====='+flag)
         userService.end();
 
     },0);

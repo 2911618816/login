@@ -491,6 +491,12 @@ section
 	width: 20px;
 	height: 20px;
 }
+
+.avatar {
+	display: inline-block;
+
+}
+
 .avatar img
 {
 	width: 20px;

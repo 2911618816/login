@@ -7,11 +7,11 @@ function UserDao() {
     this.init = function () {
         //(2)创建一个connection
         this.connection = mysql.createConnection({
-            host: 'localhost',       //主机 ip
+            host: '192.168.2.127',       //主机 ip
             user: 'root',            //MySQL认证用户名
-            password: '322822',          //MySQL认证用户密码
+            password: '',          //MySQL认证用户密码
             port: '3306',                 //端口号
-            database: 'express'          //数据库里面的数据
+            database: 'express-login'          //数据库里面的数据
         });
         //(3),连接
         this.connection.connect();
@@ -38,8 +38,8 @@ function UserDao() {
         });
     }
 
-        //数据插入
-        this.insertUser = function (email, user, password, call) {
+    //数据插入
+    this.insertUser = function (email, user, password, call) {
             //(1)执行插入
             var sqlInsert = 'INSERT INTO user(email,user,password) VALUES(?,?,?)';
             var paramsInsert = [email, user, password];
@@ -49,12 +49,16 @@ function UserDao() {
                 console.log('[INSERT ERROR] - ', err.message);
                 return;
                     }
-            console.log('dao insert=====' + result);
-                console.log(result);
+            // console.log('dao insert=====' + result);
+            //     console.log(result);
             call(result);
         });
             //5,连接结束
-            this.connection.end();
+
+    }
+
+    this.end = function () {
+        this.connection.end();
     }
 
 
